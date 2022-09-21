@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/simpleKafkaConsumer.iml" filepath="$PROJECT_DIR$/.idea/modules/simpleKafkaConsumer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/simpleKafkaConsumer-build.iml" filepath="$PROJECT_DIR$/.idea/modules/simpleKafkaConsumer-build.iml" />
     </modules>
   </component>
 </project>
