@@ -1,11 +1,13 @@
 import java.util.{Collections, Properties}
 import java.util.regex.Pattern
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.common.TopicPartition
 
 import scala.collection.JavaConverters._
 import org.apache.kafka.common.serialization.Deserializer
 
 import java.time.Duration
+import java.util
 
 
 
@@ -13,21 +15,45 @@ object SimleKafkaConsumer extends App {
 
   val props:Properties = new Properties()
   props.put("group.id", "test")
+  //props.put("fetch.max.bytes", 50)
+  props.put("max.poll.records", 5)
   props.put("bootstrap.servers","localhost:9092")
   props.put("key.deserializer",
     "org.apache.kafka.common.serialization.StringDeserializer")
   props.put("value.deserializer",
     "org.apache.kafka.common.serialization.StringDeserializer")
+  props.put("auto.offset.reset", "latest")
   //props.put("enable.auto.commit", "true")
   props.put("auto.commit.interval.ms", "1000")
   val consumer = new KafkaConsumer(props)
-  val topics = List("amazon_books")
+  //val topics = List("amazon_books")
+  val topic = "amazon_books"
+  val topicPartition0 = new TopicPartition(topic, 0)
+  val topicPartition1 = new TopicPartition(topic, 1)
+  val topicPartition2 = new TopicPartition(topic, 2)
   try {
-    consumer.subscribe(topics.asJava)
+    //consumer.subscribe(topics.asJava)
+    consumer.assign(util.Arrays.asList(topicPartition0, topicPartition1, topicPartition2))
+
+    val topicPartitions = consumer.assignment()
+    //val offset = consumer.position(topicPartitions)
+
+    //consumer.assign(java.util.Collections.singletonList(topicPartition))
+    //val offset = consumer.position(topicPartition0) + 1
+    //println(offset)
+
+    //consumer.seek(topicPartition0, offset)
+    consumer.seekToEnd(topicPartitions)
+    val offset = consumer.position(topicPartition0) - 5
+    //println(offset)
+    //println(offset - 5)
+    consumer.seek(topicPartition0, offset)
+    val records = consumer.poll(Duration.ofSeconds(10))
+
     while (true) {
-      val records = consumer.poll(Duration.ofSeconds(1))
-      val topicPartitions = consumer.assignment()
-      consumer.seekToBeginning(topicPartitions)
+      //val records = consumer.poll(Duration.ofSeconds(1))
+     // val topicPartitions = consumer.assignment()
+     // consumer.seekToBeginning(topicPartitions)
       for (record <- records.asScala) {
         println("Topic: " + record.topic() +
           ",Key: " + record.key() +
