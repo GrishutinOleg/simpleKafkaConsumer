@@ -15,7 +15,7 @@ object SimleKafkaConsumer extends App {
 
   val props:Properties = new Properties()
   props.put("group.id", "test")
-  //props.put("fetch.max.bytes", 50)
+
   props.put("max.poll.records", 5)
   props.put("bootstrap.servers","localhost:9092")
   props.put("key.deserializer",
@@ -36,24 +36,15 @@ object SimleKafkaConsumer extends App {
     consumer.assign(util.Arrays.asList(topicPartition0, topicPartition1, topicPartition2))
 
     val topicPartitions = consumer.assignment()
-    //val offset = consumer.position(topicPartitions)
 
-    //consumer.assign(java.util.Collections.singletonList(topicPartition))
-    //val offset = consumer.position(topicPartition0) + 1
-    //println(offset)
-
-    //consumer.seek(topicPartition0, offset)
     consumer.seekToEnd(topicPartitions)
     val offset = consumer.position(topicPartition0) - 5
-    //println(offset)
-    //println(offset - 5)
+
     consumer.seek(topicPartition0, offset)
     val records = consumer.poll(Duration.ofSeconds(10))
 
     while (true) {
-      //val records = consumer.poll(Duration.ofSeconds(1))
-     // val topicPartitions = consumer.assignment()
-     // consumer.seekToBeginning(topicPartitions)
+
       for (record <- records.asScala) {
         println("Topic: " + record.topic() +
           ",Key: " + record.key() +
