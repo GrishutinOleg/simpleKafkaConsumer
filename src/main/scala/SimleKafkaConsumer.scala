@@ -18,6 +18,7 @@ object SimleKafkaConsumer extends App {
 
   props.put("max.poll.records", 5)
   props.put("bootstrap.servers","localhost:9092")
+
   props.put("key.deserializer",
     "org.apache.kafka.common.serialization.StringDeserializer")
   props.put("value.deserializer",
@@ -41,9 +42,11 @@ object SimleKafkaConsumer extends App {
     val offset = consumer.position(topicPartition0) - 5
 
     consumer.seek(topicPartition0, offset)
-    val records = consumer.poll(Duration.ofSeconds(10))
+    //val records = consumer.poll(Duration.ofSeconds(10))
 
     while (true) {
+      val records = consumer.poll(Duration.ofSeconds(100))
+      println(s"size = ${records.asScala.size}")
 
       for (record <- records.asScala) {
         println("Topic: " + record.topic() +
